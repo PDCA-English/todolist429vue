@@ -1,32 +1,96 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+    <h1>Todo List</h1>
+    <div class="new">
+      <div class="name">
+        <input type="text" name="name" id="name" v-model="newName" />
+      </div>
+      <div class="email">
+        <input type="email" name="email" id="email" v-model="newEmail" />
+      </div>
+      <button @click="insertContact">新規作成</button>
     </div>
-    <router-view/>
+    <div class="table">
+      <h2>連絡先リスト</h2>
+      <table>
+        <tr>
+          <th>NAME</th>
+          <th>EMAIL</th>
+          <th>UPDATE</th>
+          <th>DELETE</th>
+        </tr>
+        <tr v-for="item in contactLists" :key="item.id">
+          <td><input type="text" v-model="item.name" /></td>
+          <td><input type="email" v-model="item.email" /></td>
+          <td>
+            <button @click="updateContact(item.id, item.name, item.email)">
+              更新
+            </button>
+          </td>
+          <td>
+            <button @click="deleteContact(item.id)">削除</button>
+          </td>
+        </tr>
+      </table>
+    </div>
   </div>
 </template>
 
+<script>
+import axios from "axios";
+export default {
+  data() {
+    return {
+      newName: "",
+      newEmail: "",
+      contactLists: [],
+    };
+  },
+  methods: {
+    async getContact() {
+      const resData = await axios.get("http://127.0.0.1:8000/api/contact/");
+      this.contactLists = resData.data.data;
+    },
+    async insertContact() {
+      const sendData = {
+        name: this.newName,
+        email: this.newEmail,
+      };
+      await axios.post("http://127.0.0.1:8000/api/contact/", sendData);
+      await this.getContact();
+    },
+    async updateContact(id, name, email) {
+      const sendData = {
+        name: name,
+        email: email,
+      };
+      await axios.put("http://127.0.0.1:8000/api/contact/" + id, sendData);
+      await this.getContact();
+    },
+    async deleteContact(id) {
+      await axios.delete("http://127.0.0.1:8000/api/contact/" + id);
+      await this.getContact();
+    },
+  },
+  created() {
+    this.getContact();
+  },
+};
+</script>
+
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+table,
+td,
+th {
+  border: 1px solid #000;
+  border-collapse: collapse;
   text-align: center;
-  color: #2c3e50;
 }
-
-#nav {
-  padding: 30px;
+td,
+th {
+  padding: 5px;
 }
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
+th {
+  background: #f0e6cc;
 }
 </style>
