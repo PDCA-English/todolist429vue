@@ -48,7 +48,7 @@ export default {
   },
   methods: {
     async getContact() {
-      const resData = await axios.get("http://127.0.0.1:8000/api/contact/");
+      const resData = await axios.get("https://todolist429.herokuapp.com/api/contact/");
       this.contactLists = resData.data.data;
     },
     async insertContact() {
@@ -56,7 +56,7 @@ export default {
         name: this.newName,
         email: this.newEmail,
       };
-      await axios.post("http://127.0.0.1:8000/api/contact/", sendData);
+      await axios.post("https://todolist429.herokuapp.com/api/contact/", sendData);
       await this.getContact();
     },
     async updateContact(id, name, email) {
@@ -64,11 +64,11 @@ export default {
         name: name,
         email: email,
       };
-      await axios.put("http://127.0.0.1:8000/api/contact/" + id, sendData);
+      await axios.put("https://todolist429.herokuapp.com/api/contact/" + id, sendData);
       await this.getContact();
     },
     async deleteContact(id) {
-      await axios.delete("http://127.0.0.1:8000/api/contact/" + id);
+      await axios.delete("https://todolist429.herokuapp.com/api/contact/" + id);
       await this.getContact();
     },
   },
